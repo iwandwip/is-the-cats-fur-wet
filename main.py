@@ -12,6 +12,7 @@ if __name__ == "__main__":
     while True:
         frame = cam.read(frame_size=480, show_fps=True)
         detect = rt.get(frame=frame)
+        print(f"detect : {detect}")
         rt.draw(frame=frame, detection=detect)
         cam.show(frame, "frame")
         cam.wait(1)
