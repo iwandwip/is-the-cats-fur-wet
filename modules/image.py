@@ -21,7 +21,7 @@ class Vision:
         self._new_time = 0
 
     def resize(self, image, width=None, height=None,
-                 interpolation=cv2.INTER_AREA):
+               interpolation=cv2.INTER_AREA):
         dim = None
         w = image.shape[1]
         h = image.shape[0]
