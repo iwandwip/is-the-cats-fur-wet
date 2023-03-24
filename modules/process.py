@@ -22,8 +22,9 @@ class Routine:
         # self.net = cv2.dnn.readNet(weight_path, cfg)
         self.net = cv2.dnn.readNetFromDarknet(cfg, weight_path)
         layer_names = self.net.getLayerNames()
-        self.output_layers = [layer_names[i - 1]
-                              for i in self.net.getUnconnectedOutLayers()]
+        # self.output_layers = [layer_names[i - 1]
+        #                       for i in self.net.getUnconnectedOutLayers()]
+        self.output_layers = self.net.getUnconnectedOutLayersNames()
 
     def dettect(self, frame):
         blob = cv2.dnn.blobFromImage(
