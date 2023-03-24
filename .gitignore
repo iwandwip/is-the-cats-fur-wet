@@ -2,3 +2,4 @@ robotis_vision/models/data.weights
 robotis_vision/cfg/config.cfg
 robotis_vision/labelImg/*
 robotis_vision/test/*
+datasets
