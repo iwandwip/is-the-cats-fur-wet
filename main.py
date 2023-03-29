@@ -11,7 +11,7 @@ if __name__ == "__main__":
             "assets/config/tiny.cfg",
             "assets/class/coco.names")
     try:
-        rospy.init_node("cat-fur", anonymous=True)
+        rospy.init_node("cat_fur", anonymous=True)
         rate = rospy.Rate(10)
         while not rospy.is_shutdown():
             frame = cam.read(frame_size=480, show_fps=True)
