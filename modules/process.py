@@ -66,30 +66,30 @@ class Routine:
 
     @staticmethod
     def draw(frame, detection):
-        if detection is not None:
-            for indexes in detection:
-                color = indexes["color"]
-                cv2.rectangle(frame, (indexes["x"], indexes["y"]),
-                              (indexes["x"] + indexes["width"], indexes["y"] + indexes["width"]), color, 2)
+        if detection is not []:
+            for idx in detection:
+                color = idx["color"]
+                cv2.rectangle(
+                    frame, (idx["x"], idx["y"]), (idx["x"] + idx["width"], idx["y"] + idx["height"]), color, 2)
                 tl = round(0.002 * (frame.shape[0] + frame.shape[1]) / 2) + 1
-                c1, c2 = (int(indexes["x"]), int(indexes["y"])), (int(
-                    indexes["width"]), int(indexes["height"]))
+                c1, c2 = (int(idx["x"]), int(idx["y"])), (int(
+                    idx["width"]), int(idx["height"]))
 
                 tf = int(max(tl - 1, 1))  # font thickness
                 t_size = cv2.getTextSize(
-                    indexes["class"], 0, fontScale=tl / 3, thickness=tf)[0]
+                    idx["class"], 0, fontScale=tl / 3, thickness=tf)[0]
                 c2 = c1[0] + t_size[0], c1[1] - t_size[1] - 3
 
                 cv2.rectangle(frame, c1, c2, color, -1, cv2.LINE_AA)  # filled
-                cv2.putText(frame, indexes["class"] + " " + str(int(indexes["confidence"] * 100)) + "%",
+                cv2.putText(frame, idx["class"] + " " + str(int(idx["confidence"] * 100)) + "%",
                             (c1[0], c1[1] - 2), 0, tl / 3, [225, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
                 cv2.circle(frame, (
-                    int(indexes["x"] + int(indexes["width"] / 2)), int(indexes["y"] + int(indexes["height"] / 2))),
+                    int(idx["x"] + int(idx["width"] / 2)), int(idx["y"] + int(idx["height"] / 2))),
                     4, color, -1)
-                cv2.putText(frame, str(int(indexes["x"] + int(indexes["width"] / 2))) + ", " + str(
-                    int(indexes["y"] + int(indexes["height"] / 2))), (
-                    int(indexes["x"] + int(indexes["width"] / 2) + 10),
-                    int(indexes["y"] + int(indexes["height"] / 2) + 10)), cv2.FONT_HERSHEY_PLAIN, tl / 2,
+                cv2.putText(frame, str(int(idx["x"] + int(idx["width"] / 2))) + ", " + str(
+                    int(idx["y"] + int(idx["height"] / 2))), (
+                    int(idx["x"] + int(idx["width"] / 2) + 10),
+                    int(idx["y"] + int(idx["height"] / 2) + 10)), cv2.FONT_HERSHEY_PLAIN, tl / 2,
                     [255, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
         return frame
 

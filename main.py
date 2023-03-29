@@ -5,13 +5,13 @@ from modules.process import Routine, Procedure
 # import rospy
 
 if __name__ == "__main__":
-    cam = Vision(True)
+    cam = Vision(False, "yolo/3.mp4")
     pr = Procedure()
-    pr.load("assets/class/coco.names",
-            "assets/data/nice.pt")
+    pr.load("assets/class/cats.txt",
+            "assets/data/best.pt")
     try:
         while True:
-            frame = cam.read(frame_size=480, show_fps=True)
+            frame = cam.read(frame_size=240, show_fps=True)
             detect = pr.predict(frame)
             pr.draw(frame, detect)
             print(detect)

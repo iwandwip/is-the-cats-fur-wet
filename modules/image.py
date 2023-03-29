@@ -7,15 +7,15 @@ import time
 
 
 class Vision:
-    def __init__(self, isUsingCam=False, addr=None):
+    def __init__(self, isUsingCam=False, addr=None, index=0):
         self.frame_count = 0
-        # self.cap = cv2.VideoCapture(0)
+        self.cap = None
         # get address
         self.cap = None
         if isUsingCam:
-            self.cap = cv2.VideoCapture(0)
-        # else:
-        #     self.cap = cv2.VideoCapture(addr)
+            self.cap = cv2.VideoCapture(index)
+        else:
+            self.cap = cv2.VideoCapture(addr)
         # fps
         self._prev_time = 0
         self._new_time = 0
