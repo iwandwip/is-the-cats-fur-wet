@@ -1,9 +1,45 @@
 import sys
 import os
 
+from ultralytics import YOLO as ul
+import pandas as pd
 import numpy as np
 import cv2
 import time
+
+
+class Procedure:
+    def __init__(self):
+        self.classes = None
+        self.model = None
+        self.count = 0
+
+    def load(self, names, weight):
+        name = open(names, "r")
+        self.classes = name.read().split("\n")
+        self.model = ul(weight)
+
+    def predict(self, frame):
+        results = self.model.predict(frame)
+        res = results[0].boxes.boxes
+        px = pd.DataFrame(res).astype("float")
+        values = {}
+        for index, row in px.iterrows():
+            x1 = int(row[0])
+            y1 = int(row[1])
+            x2 = int(row[2])
+            y2 = int(row[3])
+            d = int(row[5])
+            # label = self.classes[d]
+            # temp = {
+            #         "class": label,
+            #         "confidence": confidences[i],
+            #         "x": x,
+            #         "y": y,
+            #         "width": w,
+            #         "height": h,
+            #         "color": self.colors[class_ids[i]]
+            #     }
 
 
 class Routine:
