@@ -145,8 +145,8 @@ class Routine:
 class Procedure(Routine):
     def __init__(self):
         self.classes = None
-        self.model = None
         self.colors = None
+        self.model = None
         self.count = 0
 
     def load(self, names, weight):

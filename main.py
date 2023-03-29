@@ -7,8 +7,8 @@ from modules.process import Routine, Procedure
 if __name__ == "__main__":
     cam = Vision(True)
     pr = Procedure()
-    pr.load("assets/class/coco.txt",
-            "assets/data/nice.pt")
+    pr.load("assets/class/cats.txt",
+            "assets/data/best.pt")
     try:
         while True:
             frame = cam.read(480, True)
