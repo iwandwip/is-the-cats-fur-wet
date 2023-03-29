@@ -1,21 +1,20 @@
 from modules.utils import *
-from modules.process import Routine
 from modules.image import Vision
 from modules.filters import KalmanFilter1D
+from modules.process import Routine, Procedure
 # import rospy
 
 if __name__ == "__main__":
     cam = Vision(True)
-    rt = Routine()
-    rt.load("assets/data/tiny.weights",
-            "assets/config/tiny.cfg",
-            "assets/class/coco.names")
+    pr = Procedure()
+    pr.load("assets/class/coco.names",
+            "assets/data/nice.pt")
     try:
         while True:
             frame = cam.read(frame_size=480, show_fps=True)
-            detect = rt.get(frame=frame)
-            print(f"detect : {detect}")
-            rt.draw(frame=frame, detection=detect)
+            detect = pr.predict(frame)
+            pr.draw(frame, detect)
+            print(detect)
             cam.show(frame, "frame")
             cam.wait(1)
     except RuntimeError:

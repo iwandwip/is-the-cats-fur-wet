@@ -8,40 +8,6 @@ import cv2
 import time
 
 
-class Procedure:
-    def __init__(self):
-        self.classes = None
-        self.model = None
-        self.count = 0
-
-    def load(self, names, weight):
-        name = open(names, "r")
-        self.classes = name.read().split("\n")
-        self.model = ul(weight)
-
-    def predict(self, frame):
-        results = self.model.predict(frame)
-        res = results[0].boxes.boxes
-        px = pd.DataFrame(res).astype("float")
-        values = {}
-        for index, row in px.iterrows():
-            x1 = int(row[0])
-            y1 = int(row[1])
-            x2 = int(row[2])
-            y2 = int(row[3])
-            d = int(row[5])
-            # label = self.classes[d]
-            # temp = {
-            #         "class": label,
-            #         "confidence": confidences[i],
-            #         "x": x,
-            #         "y": y,
-            #         "width": w,
-            #         "height": h,
-            #         "color": self.colors[class_ids[i]]
-            #     }
-
-
 class Routine:
     def __init__(self):
         pass
@@ -92,40 +58,39 @@ class Routine:
                     "y": y,
                     "width": w,
                     "height": h,
+                    "center": 0,
                     "color": self.colors[class_ids[i]]
                 }
                 values.update(temp)
             return values
-        else:
-            return {}
 
-    def draw(self, frame, detection):
+    @staticmethod
+    def draw(frame, detection):
         if detection is not None:
-            color = detection["color"]
-            cv2.rectangle(frame, (detection["x"], detection["y"]),
-                          (detection["x"] + detection["width"], detection["y"] + detection["width"]), color, 2)
-            # Plots one bounding box on image frame
-            # line/font thickness
-            tl = round(0.002 * (frame.shape[0] + frame.shape[1]) / 2) + 1
-            c1, c2 = (int(detection["x"]), int(detection["y"])), (int(
-                detection["width"]), int(detection["height"]))
+            for indexes in detection:
+                color = indexes["color"]
+                cv2.rectangle(frame, (indexes["x"], indexes["y"]),
+                              (indexes["x"] + indexes["width"], indexes["y"] + indexes["width"]), color, 2)
+                tl = round(0.002 * (frame.shape[0] + frame.shape[1]) / 2) + 1
+                c1, c2 = (int(indexes["x"]), int(indexes["y"])), (int(
+                    indexes["width"]), int(indexes["height"]))
 
-            tf = int(max(tl - 1, 1))  # font thickness
-            t_size = cv2.getTextSize(
-                detection["class"], 0, fontScale=tl / 3, thickness=tf)[0]
-            c2 = c1[0] + t_size[0], c1[1] - t_size[1] - 3
+                tf = int(max(tl - 1, 1))  # font thickness
+                t_size = cv2.getTextSize(
+                    indexes["class"], 0, fontScale=tl / 3, thickness=tf)[0]
+                c2 = c1[0] + t_size[0], c1[1] - t_size[1] - 3
 
-            cv2.rectangle(frame, c1, c2, color, -1, cv2.LINE_AA)  # filled
-            cv2.putText(frame, detection["class"] + " " + str(int(detection["confidence"] * 100)) + "%",
-                        (c1[0], c1[1] - 2), 0, tl / 3, [225, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
-            cv2.circle(frame, (
-                int(detection["x"] + int(detection["width"] / 2)), int(detection["y"] + int(detection["height"] / 2))),
-                4, color, -1)
-            cv2.putText(frame, str(int(detection["x"] + int(detection["width"] / 2))) + ", " + str(
-                int(detection["y"] + int(detection["height"] / 2))), (
-                int(detection["x"] + int(detection["width"] / 2) + 10),
-                int(detection["y"] + int(detection["height"] / 2) + 10)), cv2.FONT_HERSHEY_PLAIN, tl / 2,
-                [255, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
+                cv2.rectangle(frame, c1, c2, color, -1, cv2.LINE_AA)  # filled
+                cv2.putText(frame, indexes["class"] + " " + str(int(indexes["confidence"] * 100)) + "%",
+                            (c1[0], c1[1] - 2), 0, tl / 3, [225, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
+                cv2.circle(frame, (
+                    int(indexes["x"] + int(indexes["width"] / 2)), int(indexes["y"] + int(indexes["height"] / 2))),
+                    4, color, -1)
+                cv2.putText(frame, str(int(indexes["x"] + int(indexes["width"] / 2))) + ", " + str(
+                    int(indexes["y"] + int(indexes["height"] / 2))), (
+                    int(indexes["x"] + int(indexes["width"] / 2) + 10),
+                    int(indexes["y"] + int(indexes["height"] / 2) + 10)), cv2.FONT_HERSHEY_PLAIN, tl / 2,
+                    [255, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
         return frame
 
     def get(self, frame):
@@ -170,7 +135,58 @@ class Routine:
                     "y": y,
                     "width": w,
                     "height": h,
+                    "center": 0,
                     "color": self.colors[class_ids[i]]
                 }
                 value.update(temp)
                 return value
+
+
+class Procedure(Routine):
+    def __init__(self):
+        self.classes = None
+        self.model = None
+        self.colors = None
+        self.count = 0
+
+    def load(self, names, weight):
+        name = open(names, "r")
+        self.classes = name.read().split("\n")
+        self.model = ul(weight)
+        self.colors = np.random.uniform(0, 255, size=(len(self.classes), 3))
+
+    def predict(self, frame):
+        values = []
+        # height, width, ch = frame.shape
+        results = self.model.predict(frame)
+        res = results[0].boxes.boxes
+        px = pd.DataFrame(res).astype("float")
+        boxes = []
+        center = []
+        class_ids = []
+        confidences = []
+        for index, row in px.iterrows():
+            confidence = row[4]
+            if confidence > 0.5:
+                x1, x2 = int(row[0]), int(row[2])
+                y1, y2 = int(row[1]), int(row[3])
+                # indexes, conf = index, row[4]
+                # labels = self.classes[int(row[5])]
+                boxes.append([x1, y1, x2 - x1, y2 - y1])
+                center.append([int((x1 + x2) / 2), int((y1 + y2) / 2)])
+                confidences.append(round(row[4], 2))
+                class_ids.append(int(row[5]))
+        for i in range(len(boxes)):
+            x, y, w, h = boxes[i]
+            temp = {
+                "class": str(self.classes[class_ids[i]]),
+                "confidence": confidences[i],
+                "x": x,
+                "y": y,
+                "width": w,
+                "height": h,
+                "center": center[i],
+                "color": self.colors[class_ids[i]]
+            }
+            values.append(temp)
+        return values
