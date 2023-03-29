@@ -5,16 +5,14 @@ from modules.process import Routine, Procedure
 # import rospy
 
 if __name__ == "__main__":
-    cam = Vision(False, "yolo/3.mp4")
+    cam = Vision(False, "includes/3.mp4")
     pr = Procedure()
-    pr.load("assets/class/cats.txt",
-            "assets/data/best.pt")
+    pr.load("assets/class/cats.txt", "assets/data/best.pt")
     try:
         while True:
             frame = cam.read(frame_size=240, show_fps=True)
             detect = pr.predict(frame)
             pr.draw(frame, detect)
-            print(detect)
             cam.show(frame, "frame")
             cam.wait(1)
     except RuntimeError:
