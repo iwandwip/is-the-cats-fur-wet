@@ -1,6 +1,6 @@
 from modules.utils import *
 from modules.image import Vision
-from modules.filters import KalmanFilter1D
+from modules.filters import KalmanFilter
 from modules.process import Routine, Procedure
 # import rospy
 
