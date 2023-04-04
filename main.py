@@ -1,12 +1,12 @@
 from modules.utils import *
 from modules.image import Vision
 from modules.filters import KalmanFilter
-from modules.process import Routine, Procedure
+from modules.routine import ImgBuzz
 # import rospy
 
 if __name__ == "__main__":
     cam = Vision(True)
-    pr = Procedure()
+    pr = ImgBuzz()
     pr.load("assets/class/cats.txt",
             "assets/data/best.pt")
     try:
@@ -18,16 +18,3 @@ if __name__ == "__main__":
             cam.wait(1)
     except RuntimeError:
         pass
-
-    # try:
-    #     rospy.init_node("cat_fur", anonymous=True)
-    #     rate = rospy.Rate(10)
-    #     while not rospy.is_shutdown():
-    #         frame = cam.read(frame_size=480, show_fps=True)
-    #         detect = rt.get(frame=frame)
-    #         print(f"detect : {detect}")
-    #         rt.draw(frame=frame, detection=detect)
-    #         cam.show(frame, "frame")
-    #         cam.wait(1)
-    # except rospy.ROSInterruptException:
-    #     pass

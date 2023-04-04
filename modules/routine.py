@@ -8,7 +8,7 @@ import cv2
 import time
 
 
-class Routine:
+class ImgRex:
     def __init__(self):
         pass
 
@@ -142,7 +142,7 @@ class Routine:
                 return value
 
 
-class Procedure(Routine):
+class ImgBuzz(ImgRex):
     def __init__(self):
         self.classes = None
         self.colors = None
@@ -190,3 +190,7 @@ class Procedure(Routine):
             }
             values.append(temp)
         return values
+
+
+class ImgBuster(ImgRex):
+    pass
