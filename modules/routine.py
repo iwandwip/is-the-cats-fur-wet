@@ -1,9 +1,10 @@
 import sys
 import os
 
-from ultralytics import YOLO as ul
+# from ultralytics import YOLO as ul
 import pandas as pd
 import numpy as np
+import torch
 import cv2
 import time
 
@@ -193,4 +194,59 @@ class ImgBuzz(ImgRex):
 
 
 class ImgBuster(ImgRex):
-    pass
+    def __init__(self):
+        self.classes = None
+        self.colors = None
+        self.model = None
+        self.count = 0
+
+    def load(self, names, weight):
+        name = open(names, "r")
+        self.classes = name.read().split("\n")
+        self.model = torch.hub.load('ultralytics/yolov5', 'custom',
+                                    weight, force_reload=True)
+        self.colors = np.random.uniform(0, 255, size=(len(self.classes), 3))
+
+    def predict(self, frame):
+        width = frame.shape[1]
+        height = frame.shape[0]
+
+        values = []
+        results = self.model(frame)
+        pred = results.pred[0]
+        boxes_t = pred[:, :4].cpu().numpy()
+        labels_t = pred[:, -1].cpu().numpy()
+        confidences_t = pred[:, 4].cpu().numpy()
+
+        boxes = []
+        center = []
+        class_ids = []
+        confidences = []
+        try:
+            # frame = np.squeeze(results.render())
+            for box, label, confidence in zip(boxes_t, labels_t, confidences_t):
+                if confidence > 0.3:
+                    x1, y1, x2, y2 = box
+                    boxes.append([int(x1), int(y1), int(
+                        x2) - int(x1), int(y2) - int(y1)])
+                    center.append([int((x1 + x2) / 2), int((y1 + y2) / 2)])
+                    confidences.append(round(confidence, 2))
+                    class_ids.append(int(label))
+
+            for i in range(len(boxes)):
+                x, y, w, h = boxes[i]
+                temp = {
+                    "class": str(self.classes[class_ids[i]]),
+                    "confidence": confidences[i],
+                    "x": x,
+                    "y": y,
+                    "width": w,
+                    "height": h,
+                    "center": center[i],
+                    "color": self.colors[class_ids[i]]
+                }
+                values.append(temp)
+        except TypeError:
+            pass
+
+        return values

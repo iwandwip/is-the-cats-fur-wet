@@ -1,2 +1,2 @@
-kucing_basah
 kucing_kering
+kucing_basah

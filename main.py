@@ -1,12 +1,12 @@
 from modules.utils import *
 from modules.image import Vision
 from modules.filters import KalmanFilter
-from modules.routine import ImgBuzz
+from modules.routine import ImgBuster
 # import rospy
 
 if __name__ == "__main__":
-    cam = Vision(True)
-    pr = ImgBuzz()
+    cam = Vision(False, "includes/baseBuster/cats.mp4")
+    pr = ImgBuster()
     pr.load("assets/class/cats.txt",
             "assets/data/best.pt")
     try:
