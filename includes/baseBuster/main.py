@@ -3,12 +3,29 @@ import torch
 import numpy as np
 
 
+def resizeFrame(image, width=None, height=None, interpolasi=cv2.INTER_AREA):
+    dim = None
+    w = image.shape[1]
+    h = image.shape[0]
+    if width is None and height is None:
+        return image
+    if width is None:
+        r = height / float(h)
+        dim = (int(w * r), height)
+    else:
+        r = width / float(w)
+        dim = (width, int(h * r))
+    resized = cv2.resize(image, dim, interpolation=interpolasi)
+    return resized
+
+
 model = torch.hub.load('ultralytics/yolov5', 'custom',
                        'best.pt', force_reload=True)
 
-cap = cv2.VideoCapture("wet-cat.mp4")
+cap = cv2.VideoCapture("cat.mp4")
 while True:
     ret, frame = cap.read()
+    frame = resizeFrame(frame, 350)
     if not ret:
         break
 
@@ -27,7 +44,7 @@ while True:
         # frame = np.squeeze(results.render())
 
         for box, label, confidence in zip(boxes, labels, confidences):
-            if confidence > 0.5:
+            if confidence > 0.3:
                 x1, y1, x2, y2 = box
                 x_center = int((box[0] + box[2]) / 2 * width)
                 y_center = int((box[1] + box[3]) / 2 * height)
