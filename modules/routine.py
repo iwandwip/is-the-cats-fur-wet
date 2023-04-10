@@ -2,7 +2,7 @@ import sys
 import os
 
 # from ultralytics import YOLO as ul
-import pandas as pd
+# import pandas as pd
 import numpy as np
 import torch
 import cv2
@@ -94,7 +94,7 @@ class ImgRex:
                     [255, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
         return frame
 
-    def get(self, frame):
+    def predict(self, frame):
         blob = cv2.dnn.blobFromImage(
             frame, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
         height, width, ch = frame.shape
@@ -103,6 +103,7 @@ class ImgRex:
         class_ids = []
         confidences = []
         boxes = []
+        center = []
         for out in outs:
             for detection in out:
                 scores = detection[5:]
@@ -117,11 +118,12 @@ class ImgRex:
                     # rectangle coordinates
                     x = int(center_x - w / 2)
                     y = int(center_y - h / 2)
+                    center.append([center_x, center_y])
                     boxes.append([x, y, w, h])
                     confidences.append(float(confidence))
                     class_ids.append(class_id)
 
-        value = {}
+        values = []
         indexes = cv2.dnn.NMSBoxes(
             boxes, confidences, 0.5, 0.4)  # 0.4 changeable
         font = cv2.FONT_HERSHEY_PLAIN
@@ -136,11 +138,11 @@ class ImgRex:
                     "y": y,
                     "width": w,
                     "height": h,
-                    "center": 0,
+                    "center": center[i],
                     "color": self.colors[class_ids[i]]
                 }
-                value.update(temp)
-                return value
+                values.append(temp)
+        return values
 
 
 class ImgBuzz(ImgRex):

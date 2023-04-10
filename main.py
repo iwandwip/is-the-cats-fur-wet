@@ -1,14 +1,15 @@
 from modules.utils import *
 from modules.image import Vision
 from modules.filters import KalmanFilter
-from modules.routine import ImgBuster
+from modules.routine import ImgRex
 # import rospy
 
 if __name__ == "__main__":
-    cam = Vision(False, "includes/baseBuster/cats.mp4")
-    pr = ImgBuster()
-    pr.load("assets/class/cats.txt",
-            "assets/data/best.pt")
+    cam = Vision(False, "includes/baseBuster/wet-cat.mp4")
+    pr = ImgRex()
+    pr.load("datasets/last.weights",
+            "datasets/testing.cfg",
+            "datasets/classes.txt")
     try:
         while True:
             frame = cam.read(480, True)
