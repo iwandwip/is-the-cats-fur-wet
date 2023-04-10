@@ -3,4 +3,3 @@ robotis_vision/cfg/config.cfg
 robotis_vision/labelImg/*
 robotis_vision/test/*
 datasets
-includes

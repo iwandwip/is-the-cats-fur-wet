@@ -5,11 +5,11 @@ from modules.routine import ImgRex
 # import rospy
 
 if __name__ == "__main__":
-    cam = Vision(False, "includes/baseBuster/cats.mp4")
+    cam = Vision(False, "includes/baseBuster/wet-cat.mp4")
     pr = ImgRex()
-    pr.load("datasets/cat.weights",
-            "datasets/cat.cfg",
-            "datasets/cat.txt")
+    pr.load("datasets/last.weights",
+            "datasets/testing.cfg",
+            "datasets/classes.txt")
     try:
         while True:
             frame = cam.read(480, True)
