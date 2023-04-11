@@ -2,7 +2,7 @@ import sys
 import os
 
 # from ultralytics import YOLO as ul
-# import pandas as pd
+import pandas as pd
 import numpy as np
 import torch
 import cv2
@@ -205,8 +205,8 @@ class ImgBuster(ImgRex):
     def load(self, names, weight):
         name = open(names, "r")
         self.classes = name.read().split("\n")
-        self.model = torch.hub.load('ultralytics/yolov5', 'custom',
-                                    weight, force_reload=True)
+        self.model = torch.hub.load(
+            'ultralytics/yolov5', 'custom', weight, force_reload=True)
         self.colors = np.random.uniform(0, 255, size=(len(self.classes), 3))
 
     def predict(self, frame):
