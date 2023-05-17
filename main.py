@@ -5,7 +5,7 @@ from modules.routine import ImgBuster
 # import rospy
 
 if __name__ == "__main__":
-    cam = Vision(True, "core/cat.mp4")
+    cam = Vision(False, "core/cat.mp4")
     pr = ImgBuster()
     pr.load("assets/class/cats.txt", "assets/data/best.pt")
     try:
