@@ -89,6 +89,7 @@ void DigitalOut::reverse() {
 void DigitalOut::setPins(uint8_t pin) {
         _pin = pin;
         init();
+        off();
 }
 
 bool DigitalOut::getState() {
