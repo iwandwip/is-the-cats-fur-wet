@@ -9,7 +9,7 @@ import cv2
 import time
 
 
-class ImgRex:
+class ImgRex: # 3
     def __init__(self):
         pass
 
@@ -145,7 +145,7 @@ class ImgRex:
         return values
 
 
-class ImgBuzz(ImgRex):
+class ImgBuzz(ImgRex): # 8
     def __init__(self):
         self.classes = None
         self.colors = None
@@ -195,7 +195,7 @@ class ImgBuzz(ImgRex):
         return values
 
 
-class ImgBuster(ImgRex):
+class ImgBuster(ImgRex): # 5
     def __init__(self):
         self.classes = None
         self.colors = None

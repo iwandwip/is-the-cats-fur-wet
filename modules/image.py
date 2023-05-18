@@ -83,4 +83,10 @@ class Vision:
         cv2.imshow(winName, frame)
 
     def wait(self, delay):
-        cv2.waitKey(delay)
+        return cv2.waitKey(delay)
+
+    def release(self):
+        self.cap.release()
+
+    def destroy(self):
+        cv2.destroyAllWindows()
