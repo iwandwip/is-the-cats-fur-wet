@@ -26,10 +26,8 @@ DigitalOut relaySatu, relayDua;
 void setup() {
         Serial.begin(9600);
         servo.attach(SERVO_ACT_PIN);
-        relaySatu.setPins(RELAY_SATU_PIN);
-        relayDua.setPins(RELAY_DUA_PIN);
-        relaySatu.reverse();
-        relayDua.reverse();
+        relaySatu.setPins(RELAY_SATU_PIN, true);
+        relayDua.setPins(RELAY_DUA_PIN, true);
 
         sensor.addModule(new DHTSens(DHT_SENS_PIN));
         sensor.addModule(new Sonar(ULT_ECHO_PIN, ULT_TRIG_PIN));

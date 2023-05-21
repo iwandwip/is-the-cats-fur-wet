@@ -16,6 +16,8 @@ RET_TREE = cv2.RETR_TREE
 RET_LIST = cv2.RETR_LIST
 RET_CCOMP = cv2.RETR_CCOMP
 
+def Ticks():
+    return int(time.time() * 1000)
 
 class Contours:
     def __init__(self):

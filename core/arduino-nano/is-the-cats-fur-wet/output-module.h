@@ -36,7 +36,7 @@ class DigitalOut {
         void offDelay(unsigned long delay_time);
         void update();
         void reverse();
-        void setPins(uint8_t pin);
+        void setPins(uint8_t pin, bool isReverse = false);
         bool getState();
 };
 

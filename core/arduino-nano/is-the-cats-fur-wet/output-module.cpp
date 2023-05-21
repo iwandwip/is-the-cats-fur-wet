@@ -86,10 +86,10 @@ void DigitalOut::reverse() {
         _reverse = true;
 }
 
-void DigitalOut::setPins(uint8_t pin) {
+void DigitalOut::setPins(uint8_t pin, bool isReverse) {
+        _reverse = isReverse;
         _pin = pin;
         init();
-        off();
 }
 
 bool DigitalOut::getState() {
