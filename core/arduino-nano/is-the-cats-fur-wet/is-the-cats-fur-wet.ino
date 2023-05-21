@@ -6,12 +6,12 @@
 #include "Servo.h"
 
 // macros
-#define DHT_SENS_PIN 2
-#define SERVO_ACT_PIN 3
-#define RELAY_SATU_PIN 4
-#define RELAY_DUA_PIN 5
-#define ULT_ECHO_PIN 8
-#define ULT_TRIG_PIN 9
+#define DHT_SENS_PIN    2
+#define SERVO_ACT_PIN   3
+#define RELAY_SATU_PIN  4
+#define RELAY_DUA_PIN   5
+#define ULT_ECHO_PIN    8
+#define ULT_TRIG_PIN    9
 
 SensorModule sensor;
 SerialCom com;

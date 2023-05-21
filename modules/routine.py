@@ -227,7 +227,7 @@ class ImgBuster(ImgRex): # 5
         try:
             # frame = np.squeeze(results.render())
             for box, label, confidence in zip(boxes_t, labels_t, confidences_t):
-                if confidence > 0.3:
+                if confidence > 0.5:
                     x1, y1, x2, y2 = box
                     boxes.append([int(x1), int(y1), int(
                         x2) - int(x1), int(y2) - int(y1)])

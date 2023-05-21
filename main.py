@@ -17,16 +17,16 @@ RECEIVER_TIME = 1000
 FB_TIME = 4000
 
 if __name__ == "__main__":
-    cam = Vision(isUsingCam=False, addr="core/wet-cat.mp4")
+    cam = Vision(isUsingCam=False, addr="core/wet-cat.mp4") # open camera and load class, models
     pr = Yolo()
     pr.load("assets/class/cats.txt", "assets/data/best.pt")
 
-    coms = serial.Serial('COM6', 9600, timeout=1)
+    coms = serial.Serial('COM6', 9600, timeout=1) # serial config
     coms.reset_input_buffer()
-    taskTimer = [0, 0, 0, 0, 0]
+    taskTimer = [0, 0, 0, 0, 0] # initialize timer
     catCondition = CAT_FUR_WET
 
-    cred = credentials.Certificate('firebase-sdk.json')
+    cred = credentials.Certificate('firebase-sdk.json') # firebase configuration
     firebase_admin.initialize_app(cred, {
     'databaseURL' : 'https://is-the-cats-fur-wet-default-rtdb.firebaseio.com/'
     })
@@ -46,7 +46,7 @@ if __name__ == "__main__":
                         catCondition = CAT_FUR_DRY
                 taskTimer[0] = Ticks()
             if (Ticks() - taskTimer[1] >= SEND_TIME): # send to nano
-                if catCondition:
+                if catCondition == CAT_FUR_DRY:
                     coms.write(b"1\n")
                 else:
                     coms.write(b"0\n")
@@ -58,20 +58,22 @@ if __name__ == "__main__":
                     coms.reset_input_buffer()
                 taskTimer[2] = Ticks()
             if (Ticks() - taskTimer[3] >= FB_TIME): # send to firebase
-                if nanoData:
-                    ref.set({
-                        'temperature' : nanoData[0],
-                        'humidity' : nanoData[1],
-                        'distance' : nanoData[2],
-                        'cat-condition' : str(catCondition)
-                    })
+                try:
+                    if nanoData:
+                        ref.set({
+                            'temperature' : nanoData[0],
+                            'humidity' : nanoData[1],
+                            'distance' : nanoData[2],
+                            'cat-condition' : str(catCondition)
+                        })
+                except IndexError:
+                    print("Data Error")
                 taskTimer[3] = Ticks()
             if (Ticks() - taskTimer[4] >= FB_TIME): # get from firebase
                 fbData[0] = ref.child('temperature').get()
                 fbData[1] = ref.child('humidity').get()
                 fbData[2] = ref.child('distance').get()
                 fbData[3] = ref.child('cat-condition').get()
-                print(fbData)
                 taskTimer[4] = Ticks()
             pr.draw(frame, detect) # frame debuging
             cam.show(frame, "frame")
