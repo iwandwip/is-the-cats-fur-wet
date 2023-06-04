@@ -10,7 +10,8 @@ import time
 
 import urllib.error
 
-class ImgRex: # 3
+
+class ImgRex:  # 3
     def __init__(self):
         pass
 
@@ -44,7 +45,7 @@ class ImgRex: # 3
                  for out in outs for detection in out
                  if detection[np.argmax(detection[5:]) + 5] > 0.5
                  for center_x, center_y, w, h in [((detection[0] * width), (detection[1] * height),
-                                                  (detection[2] * width), (detection[3] * height))]]
+                                                   (detection[2] * width), (detection[3] * height))]]
         if len(boxes) > 0:
             indexes = cv2.dnn.NMSBoxes(
                 boxes, confidences, 0.5, 0.4)  # 0.4 changeable
@@ -87,12 +88,12 @@ class ImgRex: # 3
                             (c1[0], c1[1] - 2), 0, tl / 3, [225, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
                 cv2.circle(frame, (
                     int(idx["x"] + int(idx["width"] / 2)), int(idx["y"] + int(idx["height"] / 2))),
-                    4, color, -1)
+                           4, color, -1)
                 cv2.putText(frame, str(int(idx["x"] + int(idx["width"] / 2))) + ", " + str(
                     int(idx["y"] + int(idx["height"] / 2))), (
-                    int(idx["x"] + int(idx["width"] / 2) + 10),
-                    int(idx["y"] + int(idx["height"] / 2) + 10)), cv2.FONT_HERSHEY_PLAIN, tl / 2,
-                    [255, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
+                                int(idx["x"] + int(idx["width"] / 2) + 10),
+                                int(idx["y"] + int(idx["height"] / 2) + 10)), cv2.FONT_HERSHEY_PLAIN, tl / 2,
+                            [255, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
         return frame
 
     def predict(self, frame):
@@ -146,7 +147,7 @@ class ImgRex: # 3
         return values
 
 
-class ImgBuzz(ImgRex): # 8
+class ImgBuzz(ImgRex):  # 8
     def __init__(self):
         self.classes = None
         self.colors = None
@@ -156,7 +157,12 @@ class ImgBuzz(ImgRex): # 8
     def load(self, names, weight):
         name = open(names, "r")
         self.classes = name.read().split("\n")
-        self.model = ul(weight)
+        self.model = None
+        try:
+            # self.model = ul(weight)
+            pass
+        except ModuleNotFoundError as e:
+            pass
         self.colors = np.random.uniform(0, 255, size=(len(self.classes), 3))
 
     def predict(self, frame):
@@ -196,7 +202,7 @@ class ImgBuzz(ImgRex): # 8
         return values
 
 
-class ImgBuster(ImgRex): # 5
+class ImgBuster(ImgRex):  # 5
     def __init__(self):
         self.classes = None
         self.colors = None
@@ -207,6 +213,7 @@ class ImgBuster(ImgRex): # 5
         with open(names, "r") as name:
             self.classes = name.read().split("\n")
         self.colors = np.random.uniform(0, 255, size=(len(self.classes), 3))
+        # print(f"self.colors[0] = {self.colors[0]}, type = {type(self.colors)}")
         # self.model = torch.hub.load('ultralytics/yolov5', 'custom', weight, force_reload=True)
         # self.model = torch.hub.load('yolov5', 'custom', weight, source='local')
 
@@ -216,11 +223,13 @@ class ImgBuster(ImgRex): # 5
         while not success:
             print(f"[INFO] connecting {count} ...")
             try:
-                self.model = torch.hub.load('ultralytics/yolov5', 'custom', weight, force_reload=True)
+                self.model = torch.hub.load(
+                    'ultralytics/yolov5', 'custom', weight)
                 success = True
             except urllib.error.URLError as e:
-                count += 1
+                print(f"[ERROR] {e}")
                 time.sleep(10.0)
+                count += 1
         if not success:
             print(f"[ERROR] Connection not stable error code: {max_count}!!")
 
@@ -266,4 +275,28 @@ class ImgBuster(ImgRex): # 5
         except TypeError:
             pass
 
+        return values
+
+
+class HogDescriptor:
+    def __init__(self):
+        self.hog = cv2.HOGDescriptor()
+        self.hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
+
+    def predict(self, frame):
+        values = []
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        boxes, weights = self.hog.detectMultiScale(gray, winStride=(8, 8), padding=(32, 32), scale=1.05)
+        for (x, y, w, h) in boxes:
+            temp = {
+                "class": "person",
+                "confidence": 0.5,
+                "x": x,
+                "y": y,
+                "width": w,
+                "height": h,
+                "center": [(x + w) // 2, (y + h) // 2],
+                "color": np.array([255.12, 10.22, 20.3])
+            }
+            values.append(temp)
         return values
