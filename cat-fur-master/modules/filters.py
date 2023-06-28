@@ -26,6 +26,7 @@ class SimpleKalmanFilter:
         err_estimate = kf.get_estimate_error()
         print(f"Kesalahan estimasi setelah perubahan: {err_estimate}")
     """
+
     def __init__(self, mea_e, est_e, q):
         self._err_measure = mea_e
         self._err_estimate = est_e
@@ -37,7 +38,8 @@ class SimpleKalmanFilter:
     def update_estimate(self, mea):
         self._kalman_gain = self._err_estimate / (self._err_estimate + self._err_measure)
         self._current_estimate = self._last_estimate + self._kalman_gain * (mea - self._last_estimate)
-        self._err_estimate = (1.0 - self._kalman_gain) * self._err_estimate + abs(self._last_estimate - self._current_estimate) * self._q
+        self._err_estimate = (1.0 - self._kalman_gain) * self._err_estimate + abs(
+            self._last_estimate - self._current_estimate) * self._q
         self._last_estimate = self._current_estimate
 
         return self._current_estimate
@@ -68,7 +70,7 @@ class KalmanFilter:
         self.kalman.measurementMatrix = np.array(
             [[1, 0, 0, 0], [0, 1, 0, 0]], np.float32)
         self.kalman.processNoiseCov = np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 2, 0], [
-                                               0, 0, 0, 2]], np.float32) * process_noise
+            0, 0, 0, 2]], np.float32) * process_noise
         self.kalman.measurementNoiseCov = np.array(
             [[1, 0], [0, 1]], np.float32) * measurement_noise
         self.kalman.errorCovPost = np.array(initial_covariance, np.float32)

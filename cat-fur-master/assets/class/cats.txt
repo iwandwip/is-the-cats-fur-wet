@@ -1,2 +1,2 @@
-kucing_kering
-kucing_basah
+dry cat
+wet cat

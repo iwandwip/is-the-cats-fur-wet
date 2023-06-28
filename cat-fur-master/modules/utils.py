@@ -16,8 +16,10 @@ RET_TREE = cv2.RETR_TREE
 RET_LIST = cv2.RETR_LIST
 RET_CCOMP = cv2.RETR_CCOMP
 
+
 def Ticks():
     return int(time.time() * 1000)
+
 
 class Contours:
     def __init__(self):
@@ -58,7 +60,7 @@ class Contours:
                 prediction = self.kf.update(np.array([x, y], np.float32))
                 pos = {"x_pos": float(prediction[0]),
                        "y_pos": float(prediction[1]),
-                       "size": radius*2}
+                       "size": radius * 2}
             except ZeroDivisionError as e:
                 pass
         return pos
@@ -94,7 +96,7 @@ class Drawing:
         if shape is DRAW_CIRCLE:
             try:
                 if pos["size"] > 0:
-                    cv2.circle(frame, (int(pos["x_pos"]), int(pos["y_pos"])), int(pos["size"]/2),
+                    cv2.circle(frame, (int(pos["x_pos"]), int(pos["y_pos"])), int(pos["size"] / 2),
                                (0, 255, 0), 2)
                     cv2.circle(frame, (int(pos["x_pos"]), int(pos["y_pos"])),
                                3, (0, 0, 255), -1)
@@ -103,7 +105,7 @@ class Drawing:
                                     cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 0), 1)
                         cv2.putText(frame, "(" + str(int(pos["x_pos"])) + "," + str(int(pos["y_pos"])) + ")",
                                     (int(pos["x_pos"]) +
-                                    10, int(pos["y_pos"]) + 15),
+                                     10, int(pos["y_pos"]) + 15),
                                     cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 255), 1)
             except KeyError as e:
                 # print("Wrong pos argument")
@@ -257,7 +259,7 @@ class ColorBased(Filter, Bitwise, Blob):
                     upper.append(cv2.getTrackbarPos(
                         data, self.__windowName))
             val = {path + "_lower_val": lower, path +
-                   "_upper_val": upper}  # not used
+                                               "_upper_val": upper}  # not used
             with open(path + ".txt", "w") as f:
                 f.write(str(val))
             return cv2.inRange(
@@ -278,12 +280,12 @@ class ColorBased(Filter, Bitwise, Blob):
     @staticmethod
     def enableReferenceLine(frame):
         # TODO :: GARIS REFERENSI - TILT
-        cv2.line(frame, (0, (frame.shape[0]//2)-20),
-                 (frame.shape[1], (frame.shape[0]//2) - 20), (255, 0, 255), 2)
+        cv2.line(frame, (0, (frame.shape[0] // 2) - 20),
+                 (frame.shape[1], (frame.shape[0] // 2) - 20), (255, 0, 255), 2)
         cv2.line(frame, (0, (frame.shape[0] // 2)),
                  (frame.shape[1], (frame.shape[0] // 2)), (0, 0, 255), 2)
-        cv2.line(frame, (0, (frame.shape[0]//2)+20),
-                 (frame.shape[1], (frame.shape[0]//2) + 20), (255, 0, 255), 2)
+        cv2.line(frame, (0, (frame.shape[0] // 2) + 20),
+                 (frame.shape[1], (frame.shape[0] // 2) + 20), (255, 0, 255), 2)
 
         cv2.line(frame, (0, (frame.shape[0] - 85)),
                  (frame.shape[1], (frame.shape[0] - 85)), (255, 0, 0), 2)
@@ -291,13 +293,13 @@ class ColorBased(Filter, Bitwise, Blob):
 
         # TODO :: GARIS REFERENSI - PAN
         cv2.line(frame, (100, 0), (100, frame.shape[0]), (255, 120, 120), 2)
-        cv2.line(frame, (frame.shape[1]-100, 0),
-                 (frame.shape[1]-100, frame.shape[0]), (255, 120, 120), 2)
+        cv2.line(frame, (frame.shape[1] - 100, 0),
+                 (frame.shape[1] - 100, frame.shape[0]), (255, 120, 120), 2)
 
         cv2.line(frame, ((frame.shape[1] // 2) - 20, 0),
                  ((frame.shape[1] // 2) - 20, frame.shape[0]), (0, 0, 255), 2)
         cv2.line(frame, ((frame.shape[1] // 2), 0),
-                 ((frame.shape[1]//2), frame.shape[0]), (0, 0, 255), 2)
+                 ((frame.shape[1] // 2), frame.shape[0]), (0, 0, 255), 2)
         cv2.line(frame, ((frame.shape[1] // 2) + 20, 0),
                  ((frame.shape[1] // 2) + 20, frame.shape[0]), (0, 0, 255), 2)
 

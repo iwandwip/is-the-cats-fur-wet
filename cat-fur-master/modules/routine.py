@@ -24,48 +24,12 @@ class ImgRex:  # 3
             self.classes = [line.strip() for line in f.readlines()]
         self.colors = np.random.uniform(
             0, 255, size=(len(self.classes), 3))  # optional
-        # self.net = cv2.dnn.readNet(weight_path, cfg)
-        self.net = cv2.dnn.readNetFromDarknet(cfg, weight_path)
+        self.net = cv2.dnn.readNet(weight_path, cfg)
+        # self.net = cv2.dnn.readNetFromDarknet(cfg, weight_path)
         layer_names = self.net.getLayerNames()
-        # self.output_layers = [layer_names[i - 1]
-        #                       for i in self.net.getUnconnectedOutLayers()]
-        self.output_layers = self.net.getUnconnectedOutLayersNames()
-
-    def dettect(self, frame):
-        blob = cv2.dnn.blobFromImage(
-            frame, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
-        height, width, ch = frame.shape
-        self.net.setInput(blob)
-        outs = self.net.forward(self.output_layers)
-        class_ids = [np.argmax(detection[5:])
-                     for out in outs for detection in out]
-        confidences = [detection[np.argmax(detection[5:]) + 5]
-                       for out in outs for detection in out]
-        boxes = [[int(center_x - w / 2), int(center_y - h / 2), int(detection[2] * width), int(detection[3] * height)]
-                 for out in outs for detection in out
-                 if detection[np.argmax(detection[5:]) + 5] > 0.5
-                 for center_x, center_y, w, h in [((detection[0] * width), (detection[1] * height),
-                                                   (detection[2] * width), (detection[3] * height))]]
-        if len(boxes) > 0:
-            indexes = cv2.dnn.NMSBoxes(
-                boxes, confidences, 0.5, 0.4)  # 0.4 changeable
-            font = cv2.FONT_HERSHEY_PLAIN
-            values = {}
-            for i in indexes.flatten():
-                label = str(self.classes[class_ids[i]])
-                x, y, w, h = boxes[i]
-                temp = {
-                    "class": label,
-                    "confidence": confidences[i],
-                    "x": x,
-                    "y": y,
-                    "width": w,
-                    "height": h,
-                    "center": 0,
-                    "color": self.colors[class_ids[i]]
-                }
-                values.update(temp)
-            return values
+        self.output_layers = [layer_names[i - 1]
+                              for i in self.net.getUnconnectedOutLayers()]
+        # self.output_layers = self.net.getUnconnectedOutLayersNames()
 
     @staticmethod
     def draw(frame, detection):
@@ -286,7 +250,8 @@ class HogDescriptor:
     def predict(self, frame):
         values = []
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        boxes, weights = self.hog.detectMultiScale(gray, winStride=(8, 8), padding=(32, 32), scale=1.05)
+        boxes, weights = self.hog.detectMultiScale(
+            gray, winStride=(8, 8), padding=(32, 32), scale=1.05)
         for (x, y, w, h) in boxes:
             temp = {
                 "class": "person",
