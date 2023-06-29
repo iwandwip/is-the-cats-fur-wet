@@ -18,7 +18,7 @@ SerialCom com;
 
 float dhtValue[2];
 float distValue;
-int stateCatFur;
+int condition;
 
 Servo servo;
 DigitalOut relaySatu, relayDua;
@@ -43,7 +43,7 @@ void loop() {
         com.sendData(1000);
         com.receive(onReceive);
 
-        if (stateCatFur) {
+        if (condition) {
                 relaySatu.on();
                 relayDua.on();
         } else {
@@ -58,5 +58,5 @@ void sensorRoutine() {
 }
 
 void onReceive(String data) {
-        stateCatFur = (int)com.getData(data, 0);
+        condition = (int)com.getData(data, 0);
 }
