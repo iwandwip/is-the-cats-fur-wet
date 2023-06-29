@@ -5,11 +5,11 @@ from modules.routine import ImgBuster as Yolo
 from utility.data import YAMLDataHandler
 
 if __name__ == "__main__":
-    cam = Vision(isUsingCam=False, addr="data/cats/cat.mp4")
+    print("[INFO] Main Initialize")
+    cam = Vision(isUsingCam=False, addr="data/cats/wet-cat.mp4")
     yolo = Yolo()
     yolo.load("assets/class/cats.txt", "assets/data/cats.pt")
-    data = YAMLDataHandler("out/output.yaml")
-    print("[INFO] Main Initialize")
+    data = YAMLDataHandler("out/cats-output-data.yaml")
     try:
         while True:
             frame = cam.read(480, True)
@@ -18,10 +18,10 @@ if __name__ == "__main__":
             data.update("condition", result)
             yolo.draw(frame, detect)
             cam.show(frame, "frame")
-            cam.writeImg(frame, "out/output.png")
+            cam.writeImg(frame, "out/cats-output.png")
             if cam.wait(1) == ord('q'):
                 break
         cam.release()
         cam.destroy()
     except Exception as e:
-        print(e)
+        print(f"[INFO] Main Initialize Failed: \n{e}")

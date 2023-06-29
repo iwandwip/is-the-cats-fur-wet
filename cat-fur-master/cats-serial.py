@@ -1,17 +1,20 @@
 import serial
 from utility.data import YAMLDataHandler
+from datetime import datetime
 
 if __name__ == "__main__":
-    coms = serial.Serial('COM6', 9600, timeout=1)  # serial config
-    coms.reset_input_buffer()
-    data = YAMLDataHandler("out/output.yaml")
-    nanoData = []
-    print("[INFO] Serial Communication Initialize")
     try:
+        print(f"[INFO] Serial Communication Initialize")
+        coms = serial.Serial('COM6', 9600, timeout=1)  # serial config
+        coms.reset_input_buffer()
+        data = YAMLDataHandler("out/cats-output-data.yaml")
+        nanoData = []
         while True:
             try:
-                condition = data.read()['condition']
-                coms.write(b"1\n" if condition else b"0\n")
+                condition = 1 if data.read()['condition'] else 0
+                writeData = f"{condition};{data.read()['dc-fan-a']};{data.read()['dc-fan-b']};{data.read()['dc-fan-c']}\n"
+                coms.write(writeData.encode('utf-8'))
+                coms.flush()
                 if coms.in_waiting > 0:
                     bufferData = coms.readline().decode('utf-8', 'ignore').strip().split()
                     bufferData = [value.replace('C', '') for value in bufferData]
@@ -22,5 +25,5 @@ if __name__ == "__main__":
                     coms.reset_input_buffer()
             except (TypeError, Exception) as e:
                 pass
-    except RuntimeError as e:
-        pass
+    except (RuntimeError, Exception) as e:
+        print(f"[ERROR] {datetime.timestamp(datetime.now())} Serial Initialize Failed: \n{e}")

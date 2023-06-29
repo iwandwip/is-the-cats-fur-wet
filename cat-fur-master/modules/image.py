@@ -17,8 +17,24 @@ class Vision:
 
         # get address
         self.cap = None
+        self.success = False
+        self.index = index
         if isUsingCam:
-            self.cap = cv2.VideoCapture(index)
+            while not self.success:
+                try:
+                    print("[INFO] Initialize Camera")
+                    self.cap = cv2.VideoCapture(self.index)
+                    if not self.cap.isOpened():
+                        raise Exception(f"Cannot Open Camera by Index {self.index}")
+                    ret, frame = self.cap.read()
+                    if not ret:
+                        raise Exception(f"Failed to Capture Frame by Index {self.index}")
+                    self.success = True
+                except Exception as err:
+                    print(f"[ERROR] Camera Initialization Failed: {err}")
+                    time.sleep(0.5)
+                    self.index += 1
+            print(f"[INFO] Camera Initialization Success")
         else:
             self.cap = cv2.VideoCapture(addr)
 
@@ -36,7 +52,7 @@ class Vision:
     def write(self, frame):
         self.out.write(frame)
 
-    def writeImg(self, frame, path="output.png"):
+    def writeImg(self, frame, path="cats-output.png"):
         filename = path
         cv2.imwrite(filename, frame)
         with open(filename, 'ab') as f:

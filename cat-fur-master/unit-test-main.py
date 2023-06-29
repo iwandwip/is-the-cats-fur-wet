@@ -8,7 +8,7 @@ if __name__ == "__main__":
     cam = Vision(isUsingCam=True)
     yolo = Yolo()
     yolo.load("assets/class/coco.txt", "assets/data/yolo5.pt")
-    data = YAMLDataHandler("out/output.yaml")
+    data = YAMLDataHandler("out/cats-output-data.yaml")
     try:
         while True:
             frame = cam.read(1080, True)
