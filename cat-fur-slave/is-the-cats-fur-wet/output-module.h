@@ -26,7 +26,7 @@ class DigitalOut {
 
       public:
         DigitalOut();
-        DigitalOut(int pin, bool isReverse = false);
+        DigitalOut(int pin, bool isReverse = true);
         void init();
         void on();
         void off();

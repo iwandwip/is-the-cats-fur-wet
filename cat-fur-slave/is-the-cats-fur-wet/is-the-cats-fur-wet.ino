@@ -6,28 +6,24 @@
 #include "Servo.h"
 
 // macros
-#define DHT_SENS_PIN    2
-#define SERVO_ACT_PIN   3
-#define RELAY_SATU_PIN  4
-#define RELAY_DUA_PIN   5
-#define ULT_ECHO_PIN    8
-#define ULT_TRIG_PIN    9
+#define DHT_SENS_PIN 2
+#define RELAY_SATU_PIN 3
+#define RELAY_DUA_PIN 4
+#define RELAY_TIGA_PIN 5
+#define ULT_ECHO_PIN 8
+#define ULT_TRIG_PIN 9
 
 SensorModule sensor;
 SerialCom com;
 
 float dhtValue[2];
 float distValue;
-int condition;
+int condition[4];
 
-Servo servo;
-DigitalOut relaySatu, relayDua;
+DigitalOut dcFanA(3), dcFanB(4), dcFanC(5);
 
 void setup() {
         Serial.begin(9600);
-        servo.attach(SERVO_ACT_PIN);
-        relaySatu.setPins(RELAY_SATU_PIN, true);
-        relayDua.setPins(RELAY_DUA_PIN, true);
 
         sensor.addModule(new DHTSens(DHT_SENS_PIN));
         sensor.addModule(new Sonar(ULT_ECHO_PIN, ULT_TRIG_PIN));
@@ -40,15 +36,30 @@ void loop() {
         com.addData(dhtValue[0], " ");
         com.addData(dhtValue[1], " ");
         com.addData(distValue, " ");
+        for (uint8_t i = 0; i < 4; i++) {
+                com.addData(condition[i], " ");
+        }
         com.sendData(1000);
         com.receive(onReceive);
 
-        if (condition) {
-                relaySatu.on();
-                relayDua.on();
+        // (condition[1]) ? dcFanA.on() : dcFanA.off();
+        // (condition[2]) ? dcFanB.on() : dcFanB.off();
+        // (condition[3]) ? dcFanC.on() : dcFanC.off();
+
+        if (condition[1]) {
+                dcFanA.on();
         } else {
-                relaySatu.off();
-                relayDua.off();
+                dcFanA.off();
+        }
+        if (condition[2]) {
+                dcFanB.on();
+        } else {
+                dcFanB.off();
+        }
+        if (condition[3]) {
+                dcFanC.on();
+        } else {
+                dcFanC.off();
         }
 }
 
@@ -58,5 +69,7 @@ void sensorRoutine() {
 }
 
 void onReceive(String data) {
-        condition = (int)com.getData(data, 0);
+        for (uint8_t i = 0; i < 4; i++) {
+                condition[i] = (int)com.getData(data, i);
+        }
 }
