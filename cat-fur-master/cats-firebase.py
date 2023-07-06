@@ -15,11 +15,17 @@ if __name__ == "__main__":
     try:
         while True:
             try:
+                dc_fan = [ref.child('dc-fan-a').get(),
+                          ref.child('dc-fan-b').get(),
+                          ref.child('dc-fan-c').get(),
+                          ref.child('dc-fan-d').get()]
                 ref.update({key: value for key, value in data.read().items() if not key.startswith('dc-fan')})
-                data.update('dc-fan-a', ref.child('dc-fan-a').get())
-                data.update('dc-fan-b', ref.child('dc-fan-b').get())
-                data.update('dc-fan-c', ref.child('dc-fan-c').get())
+                data.update('dc-fan-a', dc_fan[0])
+                data.update('dc-fan-b', dc_fan[1])
+                data.update('dc-fan-c', dc_fan[2])
+                data.update('dc-fan-d', dc_fan[3])
                 bucket.blob('cats-output.png').upload_from_filename('out/cats-output.png')
+                print(f"[INFO] FanA: {dc_fan[0]} | FanB: {dc_fan[1]} | FanC: {dc_fan[2]} | FanD: {dc_fan[3]} ")
             except Exception as err:
                 print(err)
     except RuntimeError as e:

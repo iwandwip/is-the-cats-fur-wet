@@ -5,29 +5,28 @@
 #include "HCSR04.h"
 #include "Servo.h"
 
-// macros
-#define DHT_SENS_PIN 2
-#define RELAY_SATU_PIN 3
-#define RELAY_DUA_PIN 4
-#define RELAY_TIGA_PIN 5
-#define ULT_ECHO_PIN 8
-#define ULT_TRIG_PIN 9
+#define SSR_PIN 3
+#define SSR_THRESHOLD_UP 35.00
+#define SSR_THRESHOLD_MID 30.00
 
 SensorModule sensor;
 SerialCom com;
 
 float dhtValue[2];
 float distValue;
-int condition[4];
+int condition[5];
 
-DigitalOut dcFanA(3), dcFanB(4), dcFanC(5);
+DigitalOut dcFanA(4);
+DigitalOut dcFanB(5);
+DigitalOut dcFanC(8);
+DigitalOut dcFanD(9);
 
 void setup() {
         Serial.begin(9600);
-
-        sensor.addModule(new DHTSens(DHT_SENS_PIN));
-        sensor.addModule(new Sonar(ULT_ECHO_PIN, ULT_TRIG_PIN));
+        sensor.addModule(new DHTSens(2));
+        sensor.addModule(new Sonar(6, 7));
         sensor.init();
+        pinMode(SSR_PIN, OUTPUT);
 }
 
 void loop() {
@@ -42,25 +41,22 @@ void loop() {
         com.sendData(1000);
         com.receive(onReceive);
 
-        // (condition[1]) ? dcFanA.on() : dcFanA.off();
-        // (condition[2]) ? dcFanB.on() : dcFanB.off();
-        // (condition[3]) ? dcFanC.on() : dcFanC.off();
+        if (condition[0] == 0) {
+                if (dhtValue[0] < SSR_THRESHOLD_MID) {
+                        analogWrite(SSR_PIN, 255);
+                } else if (dhtValue[0] >= SSR_THRESHOLD_MID && dhtValue[0] < SSR_THRESHOLD_UP) {
+                        analogWrite(SSR_PIN, 128);
+                } else {
+                        analogWrite(SSR_PIN, 0);
+                }
+        } else {
+                analogWrite(SSR_PIN, 0);
+        }
 
-        if (condition[1]) {
-                dcFanA.on();
-        } else {
-                dcFanA.off();
-        }
-        if (condition[2]) {
-                dcFanB.on();
-        } else {
-                dcFanB.off();
-        }
-        if (condition[3]) {
-                dcFanC.on();
-        } else {
-                dcFanC.off();
-        }
+        (condition[1] == 1) ? dcFanA.on() : dcFanA.off();
+        (condition[2] == 1) ? dcFanB.on() : dcFanB.off();
+        (condition[3] == 1) ? dcFanC.on() : dcFanC.off();
+        (condition[4] == 1) ? dcFanD.on() : dcFanD.off();
 }
 
 void sensorRoutine() {
@@ -69,7 +65,7 @@ void sensorRoutine() {
 }
 
 void onReceive(String data) {
-        for (uint8_t i = 0; i < 4; i++) {
+        for (uint8_t i = 0; i < 5; i++) {
                 condition[i] = (int)com.getData(data, i);
         }
 }

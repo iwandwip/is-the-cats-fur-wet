@@ -1,6 +1,7 @@
 condition: false
-dc-fan-a: '0'
-dc-fan-b: '0'
-dc-fan-c: '0'
-humidity: '75.00'
-temperature: '26.90'
+dc-fan-a: '1'
+dc-fan-b: '1'
+dc-fan-c: '1'
+dc-fan-d: '1'
+humidity: '67.70'
+temperature: '29.20'

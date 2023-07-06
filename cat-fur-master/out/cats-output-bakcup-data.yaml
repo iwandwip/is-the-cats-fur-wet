@@ -1,0 +1,7 @@
+condition: true
+dc-fan-a: '0'
+dc-fan-b: '0'
+dc-fan-c: '0'
+dc-fan-d: '0'
+humidity: '74.80'
+temperature: '25.80'
